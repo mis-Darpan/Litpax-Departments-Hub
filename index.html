@@ -19,6 +19,7 @@
     Data load nahi hua. Page refresh karein.
   </div>
 
+  <!-- TOPBAR -->
   <div class="topbar">
     <div class="topbar-left">
       <div class="topbar-logo">LT</div>
@@ -26,17 +27,37 @@
       <div class="topbar-divider"></div>
       <div class="topbar-page">Departments Hub</div>
     </div>
-    <button class="lang-pill" onclick="toggleLang()">
-      <i class="ti ti-language" aria-hidden="true"></i>
-      <span id="langBtnText">हिंदी</span>
-    </button>
+    <div class="topbar-right">
+      <button class="lang-pill" onclick="toggleLang()">
+        <i class="ti ti-language" aria-hidden="true"></i>
+        <span id="langBtnText">हिंदी</span>
+      </button>
+      <a href="admin.html" class="admin-btn">
+        <i class="ti ti-settings" aria-hidden="true"></i>
+        <span>Admin</span>
+      </a>
+    </div>
   </div>
 
-  <div class="notice-bar" id="noticeBanner">
-    <i class="ti ti-info-circle" aria-hidden="true"></i>
-    <span id="noticeText"></span>
+  <!-- NOTICE BOARD -->
+  <div class="notice-board" id="noticeBanner">
+    <div class="notice-inner">
+      <div class="notice-left">
+        <div class="notice-icon-wrap">
+          <i class="ti ti-speakerphone" aria-hidden="true"></i>
+        </div>
+        <div>
+          <div class="notice-label">Notice</div>
+          <div class="notice-text" id="noticeText"></div>
+        </div>
+      </div>
+      <button class="notice-close" onclick="document.getElementById('noticeBanner').style.display='none'">
+        <i class="ti ti-x" aria-hidden="true"></i>
+      </button>
+    </div>
   </div>
 
+  <!-- DEPT VIEW -->
   <div id="deptView">
     <div class="page">
       <div class="page-eyebrow" id="companyEyebrow">Litpax Technology</div>
@@ -46,6 +67,7 @@
     </div>
   </div>
 
+  <!-- FORMS VIEW -->
   <div class="forms-view" id="formsView">
     <div class="forms-nav">
       <span onclick="goBack()">Home</span>
