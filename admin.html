@@ -9,7 +9,7 @@
 </head>
 <body>
 
-  <!-- ── LOGIN VIEW ── -->
+  <!-- LOGIN -->
   <div class="view login-wrap" id="loginView" style="display:flex">
     <div class="login-card">
       <div class="login-logo"><i class="ti ti-lock"></i></div>
@@ -21,10 +21,8 @@
     </div>
   </div>
 
-  <!-- ── ADMIN VIEW ── -->
+  <!-- ADMIN VIEW -->
   <div class="view" id="adminView">
-
-    <!-- Header -->
     <div class="admin-header">
       <div class="admin-header-left">
         <div class="admin-logo-sm"><i class="ti ti-layout-grid"></i></div>
@@ -33,25 +31,16 @@
           <div class="admin-sub">Litpax Departments Hub</div>
         </div>
       </div>
-      <button class="logout-btn" onclick="logout()">
-        <i class="ti ti-logout"></i> Logout
-      </button>
+      <button class="logout-btn" onclick="logout()"><i class="ti ti-logout"></i> Logout</button>
     </div>
 
-    <!-- Tabs -->
     <div class="admin-tabs">
-      <button class="tab-btn active" onclick="switchTab('depts')">
-        <i class="ti ti-building"></i> Departments
-      </button>
-      <button class="tab-btn" onclick="switchTab('forms')">
-        <i class="ti ti-forms"></i> Forms
-      </button>
-      <button class="tab-btn" onclick="switchTab('notice')">
-        <i class="ti ti-speakerphone"></i> Notice
-      </button>
+      <button class="tab-btn active" onclick="switchTab('depts')"><i class="ti ti-building"></i> Departments</button>
+      <button class="tab-btn" onclick="switchTab('forms')"><i class="ti ti-forms"></i> Forms</button>
+      <button class="tab-btn" onclick="switchTab('notice')"><i class="ti ti-speakerphone"></i> Notice Board</button>
     </div>
 
-    <!-- Tab: Departments -->
+    <!-- Departments Tab -->
     <div class="tab-content" id="tab-depts" style="display:block">
       <div class="section-header">
         <h3>All Departments</h3>
@@ -60,7 +49,7 @@
       <div id="adminDeptList"></div>
     </div>
 
-    <!-- Tab: Forms -->
+    <!-- Forms Tab -->
     <div class="tab-content" id="tab-forms">
       <div class="section-header">
         <h3>All Forms</h3>
@@ -74,48 +63,28 @@
       <div id="adminFormList"></div>
     </div>
 
-    <!-- Tab: Notice -->
+    <!-- Notice Board Tab -->
     <div class="tab-content" id="tab-notice">
       <div class="section-header">
         <h3>Notice Board</h3>
+        <button class="btn-add" onclick="showModal('noticeModal')"><i class="ti ti-plus"></i> Add Notice</button>
       </div>
-      <div class="notice-form">
-        <textarea id="noticeInput" placeholder="Notice likhein jo employees ko dikhna chahiye..."></textarea>
-        <button class="btn-save" id="saveNoticeBtn" onclick="saveNotice()">
-          <i class="ti ti-check"></i> Save Notice
-        </button>
-      </div>
+      <div id="adminNoticeList"></div>
     </div>
-
   </div>
 
-  <!-- ── DEPT MODAL ── -->
+  <!-- DEPT MODAL -->
   <div class="modal-overlay" id="deptModal">
     <div class="modal-box">
       <div class="modal-header">
         <div class="modal-title" id="deptModalTitle">Add Department</div>
         <button class="modal-close" onclick="closeModal('deptModal')"><i class="ti ti-x"></i></button>
       </div>
-      <div class="form-group">
-        <label>ID (lowercase, no spaces)</label>
-        <input type="text" id="deptId" placeholder="e.g. store, dispatch" />
-      </div>
-      <div class="form-group">
-        <label>Name</label>
-        <input type="text" id="deptName" placeholder="e.g. Store" />
-      </div>
-      <div class="form-group">
-        <label>Icon (Tabler icon name)</label>
-        <input type="text" id="deptIcon" placeholder="e.g. ti-package" />
-      </div>
-      <div class="form-group">
-        <label>Color</label>
-        <input type="color" id="deptColor" value="#185FA5" />
-      </div>
-      <div class="form-group">
-        <label>Order</label>
-        <input type="number" id="deptOrder" value="99" />
-      </div>
+      <div class="form-group"><label>ID (lowercase, no spaces)</label><input type="text" id="deptId" placeholder="e.g. store" /></div>
+      <div class="form-group"><label>Name</label><input type="text" id="deptName" placeholder="e.g. Store" /></div>
+      <div class="form-group"><label>Icon (Tabler icon)</label><input type="text" id="deptIcon" placeholder="e.g. ti-package" /></div>
+      <div class="form-group"><label>Color</label><input type="color" id="deptColor" value="#185FA5" /></div>
+      <div class="form-group"><label>Order</label><input type="number" id="deptOrder" value="99" /></div>
       <div class="modal-footer">
         <button class="btn-cancel" onclick="closeModal('deptModal')">Cancel</button>
         <button class="btn-save" id="saveDeptBtn" onclick="saveDept()">Save</button>
@@ -123,7 +92,7 @@
     </div>
   </div>
 
-  <!-- ── FORM MODAL ── -->
+  <!-- FORM MODAL -->
   <div class="modal-overlay" id="formModal">
     <div class="modal-box">
       <div class="modal-header">
@@ -131,32 +100,32 @@
         <button class="modal-close" onclick="closeModal('formModal')"><i class="ti ti-x"></i></button>
       </div>
       <input type="hidden" id="formId" />
-      <div class="form-group">
-        <label>Department</label>
-        <select id="formDeptId"></select>
-      </div>
-      <div class="form-group">
-        <label>Form Name</label>
-        <input type="text" id="formName" placeholder="e.g. Raw Material Inward Form" />
-      </div>
-      <div class="form-group">
-        <label>Form URL</label>
-        <input type="url" id="formUrl" placeholder="https://docs.google.com/forms/..." />
-      </div>
-      <div class="form-group">
-        <label>Type</label>
-        <select id="formType">
-          <option value="Google Form">Google Form</option>
-          <option value="Web Form">Web Form</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>Order</label>
-        <input type="number" id="formOrder" value="99" />
-      </div>
+      <div class="form-group"><label>Department</label><select id="formDeptId"></select></div>
+      <div class="form-group"><label>Form Name</label><input type="text" id="formName" placeholder="e.g. Raw Material Inward Form" /></div>
+      <div class="form-group"><label>Form URL</label><input type="url" id="formUrl" placeholder="https://docs.google.com/forms/..." /></div>
+      <div class="form-group"><label>Type</label><select id="formType"><option value="Google Form">Google Form</option><option value="Web Form">Web Form</option></select></div>
+      <div class="form-group"><label>Order</label><input type="number" id="formOrder" value="99" /></div>
       <div class="modal-footer">
         <button class="btn-cancel" onclick="closeModal('formModal')">Cancel</button>
         <button class="btn-save" id="saveFormBtn" onclick="saveForm()">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- NOTICE MODAL -->
+  <div class="modal-overlay" id="noticeModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-title">New Notice</div>
+        <button class="modal-close" onclick="closeModal('noticeModal')"><i class="ti ti-x"></i></button>
+      </div>
+      <div class="form-group">
+        <label>Notice Message</label>
+        <textarea id="noticeInput" rows="4" placeholder="Notice likhein..."></textarea>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="closeModal('noticeModal')">Cancel</button>
+        <button class="btn-save" id="saveNoticeBtn" onclick="saveNotice()">Post Notice</button>
       </div>
     </div>
   </div>
