@@ -51,11 +51,14 @@
 
       <!-- RIGHT: NOTICE BOARD -->
       <div class="notice-col">
-        <div class="nb-header">
-          <div class="nb-dot"></div>
-          <div class="nb-title">Notice Board</div>
+        <div class="nb-topbar">
+          <div class="nb-title-wrap">
+            <div class="nb-dot"></div>
+            <div class="nb-title">Notice Board</div>
+          </div>
+          <div class="nb-count" id="noticeCount">0 notices</div>
         </div>
-        <div class="notice-papers" id="noticePapers">
+        <div class="cork-board" id="corkBoard">
           <div class="no-notice">
             <i class="ti ti-pin" aria-hidden="true"></i>
             Koi notice nahi hai
@@ -85,7 +88,6 @@
         </a>
       </div>
     </div>
-
     <div class="forms-nav">
       <span onclick="goBack()">Home</span>
       <i class="ti ti-chevron-right" aria-hidden="true"></i>
