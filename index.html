@@ -9,56 +9,58 @@
 </head>
 <body>
 
-  <!-- LOADING -->
   <div id="loadingOverlay">
     <div class="spinner"></div>
     <div class="loading-text">Loading...</div>
   </div>
 
-  <!-- ERROR -->
   <div id="errorMsg">
-    <i class="ti ti-wifi-off" style="font-size:32px;display:block;margin-bottom:8px"></i>
+    <i class="ti ti-wifi-off" style="font-size:28px;display:block;margin-bottom:8px"></i>
     Data load nahi hua. Page refresh karein.
   </div>
 
-  <!-- NOTICE BANNER -->
-  <div class="notice-banner" id="noticeBanner">
-    <i class="ti ti-speakerphone"></i>
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-logo">LT</div>
+      <div class="topbar-name">Litpax</div>
+      <div class="topbar-divider"></div>
+      <div class="topbar-page">Departments Hub</div>
+    </div>
+    <button class="lang-pill" onclick="toggleLang()">
+      <i class="ti ti-language" aria-hidden="true"></i>
+      <span id="langBtnText">हिंदी</span>
+    </button>
+  </div>
+
+  <div class="notice-bar" id="noticeBanner">
+    <i class="ti ti-info-circle" aria-hidden="true"></i>
     <span id="noticeText"></span>
   </div>
 
-  <!-- DEPT VIEW -->
   <div id="deptView">
-    <div class="hub-top">
-      <div class="hub-top-row">
-        <div class="hub-badge">
-          <span class="badge-dot"></span>
-          <span id="companyName">Litpax Technology</span>
-        </div>
-        <button id="langToggle">हिंदी</button>
-      </div>
-      <div class="hub-h1">Departments <span>Hub</span></div>
-      <div id="hubTagline">Select your department and fill the form</div>
-    </div>
-
-    <div class="dept-section">
-      <div class="section-label">Departments</div>
+    <div class="page">
+      <div class="page-eyebrow" id="companyEyebrow">Litpax Technology</div>
+      <div class="page-title">Departments <span>—</span></div>
+      <div class="page-sub" id="pageSub">Select your department and fill the form</div>
       <div class="dept-grid" id="deptGrid"></div>
     </div>
   </div>
 
-  <!-- FORMS VIEW -->
   <div class="forms-view" id="formsView">
-    <div class="forms-top">
-      <button class="back-btn" id="backBtn" onclick="goBack()">
-        <i class="ti ti-arrow-left"></i>
-        <span>Back</span>
-      </button>
-      <div id="formsDeptTitle" class="forms-dept-title"></div>
+    <div class="forms-nav">
+      <span onclick="goBack()">Home</span>
+      <i class="ti ti-chevron-right" aria-hidden="true"></i>
+      <span id="breadcrumb" style="color:#37352f;font-weight:500;"></span>
     </div>
-    <div class="forms-dept-bar" id="formsDeptBar"></div>
-    <div class="forms-body">
-      <div class="forms-list" id="formsList"></div>
+    <div class="forms-page">
+      <div class="fp-header">
+        <div class="fp-icon" id="fpIcon"></div>
+        <div>
+          <div class="fp-title" id="fpTitle"></div>
+          <div class="fp-sub" id="fpSub"></div>
+        </div>
+      </div>
+      <table class="form-table" id="formTable"></table>
     </div>
   </div>
 
