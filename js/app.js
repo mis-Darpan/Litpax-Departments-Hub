@@ -16,54 +16,61 @@ document.addEventListener('DOMContentLoaded', async () => {
       const el = document.getElementById('companyEyebrow');
       if (el) el.textContent = appData.settings.company_name;
     }
-  } catch (err) {
-    showError();
-  } finally {
-    showLoading(false);
-  }
+    // Auto refresh notices har 30 second
+    setInterval(refreshNotices, 30000);
+  } catch (err) { showError(); }
+  finally { showLoading(false); }
 });
 
 async function loadData() {
-  // Departments & Forms — cached (5 min)
   const cached = sessionStorage.getItem('hub_depts');
   const cachedAt = sessionStorage.getItem('hub_depts_at');
-  let deptsData = null;
-
+  let base = null;
   if (cached && cachedAt && (Date.now() - cachedAt < CONFIG.CACHE_TTL)) {
-    deptsData = JSON.parse(cached);
+    base = JSON.parse(cached);
   } else {
     const res = await fetch(`${CONFIG.GAS_URL}?action=getData`);
-    const json = await res.json();
-    if (json.error) throw new Error(json.error);
-    deptsData = json;
-    sessionStorage.setItem('hub_depts', JSON.stringify(json));
+    base = await res.json();
+    if (base.error) throw new Error(base.error);
+    sessionStorage.setItem('hub_depts', JSON.stringify(base));
     sessionStorage.setItem('hub_depts_at', Date.now());
   }
-
-  // Notices — ALWAYS fresh (no cache)
+  // Notices always fresh
   const nRes = await fetch(`${CONFIG.GAS_URL}?action=getData&t=${Date.now()}`);
   const nJson = await nRes.json();
+  appData = { ...base, notices: nJson.notices || [] };
+}
 
-  appData = {
-    ...deptsData,
-    notices: nJson.notices || []
-  };
+// Sirf notices refresh karta hai — page flicker nahi hoga
+async function refreshNotices() {
+  try {
+    const res = await fetch(`${CONFIG.GAS_URL}?action=getData&t=${Date.now()}`);
+    const json = await res.json();
+    if (json.error) return;
+    const newNotices = json.notices || [];
+
+    // Sirf tab update karo jab change ho
+    const oldIds = (appData.notices || []).map(n => n.id).join(',');
+    const newIds = newNotices.map(n => n.id).join(',');
+    if (oldIds !== newIds) {
+      appData.notices = newNotices;
+      renderNotices();
+      showRefreshPulse();
+    }
+  } catch (e) { /* silently fail */ }
 }
 
 function renderGrid() {
   const grid = document.getElementById('deptGrid');
   grid.innerHTML = '';
-  const sorted = [...appData.departments].sort((a, b) => a.order - b.order);
-  sorted.forEach(dept => {
+  [...appData.departments].sort((a, b) => a.order - b.order).forEach(dept => {
     const count = appData.forms.filter(f => f.dept_id === dept.id).length;
     const card = document.createElement('div');
     card.className = 'dept-card';
     card.onclick = () => openDept(dept.id);
     card.innerHTML = `
       <i class="ti ti-arrow-right dc-arr" aria-hidden="true"></i>
-      <div class="dc-icon" style="background:${dept.color}22;color:${dept.color}">
-        <i class="ti ${dept.icon}" aria-hidden="true"></i>
-      </div>
+      <div class="dc-icon" style="background:${dept.color}22;color:${dept.color}"><i class="ti ${dept.icon}" aria-hidden="true"></i></div>
       <div class="dc-name">${dept.name}</div>
       <div class="dc-count">${count} ${LABELS[currentLang].forms}</div>
     `;
@@ -72,67 +79,65 @@ function renderGrid() {
 }
 
 function renderNotices() {
-  const el = document.getElementById('noticePapers');
+  const board = document.getElementById('corkBoard');
+  const countEl = document.getElementById('noticeCount');
   const notices = appData.notices || [];
+  countEl.textContent = `${notices.length} notice${notices.length !== 1 ? 's' : ''}`;
   if (!notices.length) {
-    el.innerHTML = '<div class="no-notice"><i class="ti ti-pin" aria-hidden="true"></i>Koi notice nahi hai</div>';
+    board.innerHTML = '<div class="no-notice"><i class="ti ti-pin" aria-hidden="true"></i>Koi notice nahi hai</div>';
     return;
   }
-  el.innerHTML = '';
+  board.innerHTML = '';
   notices.forEach(n => {
-    const date = n.created_at
-      ? new Date(n.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
-      : '';
     const div = document.createElement('div');
     div.className = 'paper';
     div.innerHTML = `
-      ${date ? `<div class="paper-date">${date}</div>` : ''}
+      ${n.created_at ? `<div class="paper-date">${n.created_at}</div>` : ''}
       <div class="paper-msg">${n.message}</div>
-      <div class="paper-tag"><i class="ti ti-pin" style="font-size:10px" aria-hidden="true"></i> Notice</div>
+      <div class="paper-footer">
+        <div class="paper-tag"><i class="ti ti-pin" style="font-size:10px" aria-hidden="true"></i> Notice</div>
+      </div>
     `;
-    el.appendChild(div);
+    board.appendChild(div);
   });
+}
+
+// Notice board pe subtle pulse — sirf jab update ho
+function showRefreshPulse() {
+  const el = document.getElementById('noticeCount');
+  if (!el) return;
+  el.style.background = '#2F9E44';
+  el.style.color = '#fff';
+  el.textContent = '● Updated';
+  setTimeout(() => {
+    const notices = appData.notices || [];
+    el.style.background = '';
+    el.style.color = '';
+    el.textContent = `${notices.length} notice${notices.length !== 1 ? 's' : ''}`;
+  }, 2000);
 }
 
 function openDept(deptId) {
   const dept = appData.departments.find(d => d.id === deptId);
   const forms = appData.forms.filter(f => f.dept_id === deptId).sort((a, b) => a.order - b.order);
-
   document.getElementById('mainApp').style.display = 'none';
   document.getElementById('formsApp').style.display = 'block';
   document.getElementById('breadcrumb').textContent = dept.name;
-
   const fi = document.getElementById('fpIcon');
   fi.innerHTML = `<i class="ti ${dept.icon}" style="font-size:20px;color:${dept.color}" aria-hidden="true"></i>`;
   fi.style.background = dept.color + '22';
-
   document.getElementById('fpTitle').textContent = dept.name;
   document.getElementById('fpSub').textContent = `${forms.length} ${LABELS[currentLang].forms} available`;
-
   const tbl = document.getElementById('formTable');
   tbl.innerHTML = '';
-
-  if (!forms.length) {
-    tbl.innerHTML = `<tr><td class="empty-state">${LABELS[currentLang].no_forms}</td></tr>`;
-    return;
-  }
-
+  if (!forms.length) { tbl.innerHTML = `<tr><td class="empty-state">${LABELS[currentLang].no_forms}</td></tr>`; return; }
   forms.forEach(f => {
     const tr = document.createElement('tr');
     tr.onclick = () => window.open(f.url, '_blank');
     tr.innerHTML = `
-      <td style="width:38px;padding:11px 6px 11px 0;">
-        <div class="ft-icon" style="background:${dept.color}22;color:${dept.color}">
-          <i class="ti ti-forms" aria-hidden="true"></i>
-        </div>
-      </td>
-      <td>
-        <div class="ft-name">${f.name}</div>
-        <div class="ft-type">${f.type}</div>
-      </td>
-      <td style="width:28px;">
-        <div class="ft-ext"><i class="ti ti-external-link" aria-hidden="true"></i></div>
-      </td>
+      <td style="width:38px;padding:11px 6px 11px 0;"><div class="ft-icon" style="background:${dept.color}22;color:${dept.color}"><i class="ti ti-forms" aria-hidden="true"></i></div></td>
+      <td><div class="ft-name">${f.name}</div><div class="ft-type">${f.type}</div></td>
+      <td style="width:28px;"><div class="ft-ext"><i class="ti ti-external-link" aria-hidden="true"></i></div></td>
     `;
     tbl.appendChild(tr);
   });
@@ -150,13 +155,5 @@ function toggleLang() {
   renderGrid();
 }
 
-function showLoading(show) {
-  const el = document.getElementById('loadingOverlay');
-  if (el) el.style.display = show ? 'flex' : 'none';
-}
-
-function showError() {
-  const el = document.getElementById('errorMsg');
-  if (el) el.style.display = 'block';
-  showLoading(false);
-}
+function showLoading(show) { const el = document.getElementById('loadingOverlay'); if (el) el.style.display = show ? 'flex' : 'none'; }
+function showError() { const el = document.getElementById('errorMsg'); if (el) el.style.display = 'block'; showLoading(false); }
