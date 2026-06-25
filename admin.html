@@ -81,7 +81,7 @@
       </div>
       <div class="notice-form">
         <textarea id="noticeInput" placeholder="Notice likhein jo employees ko dikhna chahiye..."></textarea>
-        <button class="btn-save" onclick="saveNotice()">
+        <button class="btn-save" id="saveNoticeBtn" onclick="saveNotice()">
           <i class="ti ti-check"></i> Save Notice
         </button>
       </div>
@@ -118,7 +118,7 @@
       </div>
       <div class="modal-footer">
         <button class="btn-cancel" onclick="closeModal('deptModal')">Cancel</button>
-        <button class="btn-save" onclick="saveDept()">Save</button>
+        <button class="btn-save" id="saveDeptBtn" onclick="saveDept()">Save</button>
       </div>
     </div>
   </div>
@@ -156,7 +156,7 @@
       </div>
       <div class="modal-footer">
         <button class="btn-cancel" onclick="closeModal('formModal')">Cancel</button>
-        <button class="btn-save" onclick="saveForm()">Save</button>
+        <button class="btn-save" id="saveFormBtn" onclick="saveForm()">Save</button>
       </div>
     </div>
   </div>
