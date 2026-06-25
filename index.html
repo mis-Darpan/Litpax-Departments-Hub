@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Litpax Departments Hub</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- LOADING -->
+  <div id="loadingOverlay">
+    <div class="spinner"></div>
+    <div class="loading-text">Loading...</div>
+  </div>
+
+  <!-- ERROR -->
+  <div id="errorMsg">
+    <i class="ti ti-wifi-off" style="font-size:32px;display:block;margin-bottom:8px"></i>
+    Data load nahi hua. Page refresh karein.
+  </div>
+
+  <!-- NOTICE BANNER -->
+  <div class="notice-banner" id="noticeBanner">
+    <i class="ti ti-speakerphone"></i>
+    <span id="noticeText"></span>
+  </div>
+
+  <!-- DEPT VIEW -->
+  <div id="deptView">
+    <div class="hub-top">
+      <div class="hub-top-row">
+        <div class="hub-badge">
+          <span class="badge-dot"></span>
+          <span id="companyName">Litpax Technology</span>
+        </div>
+        <button id="langToggle">हिंदी</button>
+      </div>
+      <div class="hub-h1">Departments <span>Hub</span></div>
+      <div id="hubTagline">Select your department and fill the form</div>
+    </div>
+
+    <div class="dept-section">
+      <div class="section-label">Departments</div>
+      <div class="dept-grid" id="deptGrid"></div>
+    </div>
+  </div>
+
+  <!-- FORMS VIEW -->
+  <div class="forms-view" id="formsView">
+    <div class="forms-top">
+      <button class="back-btn" id="backBtn" onclick="goBack()">
+        <i class="ti ti-arrow-left"></i>
+        <span>Back</span>
+      </button>
+      <div id="formsDeptTitle" class="forms-dept-title"></div>
+    </div>
+    <div class="forms-dept-bar" id="formsDeptBar"></div>
+    <div class="forms-body">
+      <div class="forms-list" id="formsList"></div>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
