@@ -19,56 +19,73 @@
     Data load nahi hua. Page refresh karein.
   </div>
 
-  <!-- TOPBAR -->
-  <div class="topbar">
-    <div class="topbar-left">
-      <div class="topbar-logo">LT</div>
-      <div class="topbar-name">Litpax</div>
-      <div class="topbar-divider"></div>
-      <div class="topbar-page">Departments Hub</div>
+  <!-- MAIN APP -->
+  <div id="mainApp">
+    <div class="topbar">
+      <div class="topbar-left">
+        <div class="tl">LT</div>
+        <div class="tn">Litpax</div>
+        <div class="td"></div>
+        <div class="tp">Departments Hub</div>
+      </div>
+      <div class="topbar-right">
+        <button class="pill" onclick="toggleLang()">
+          <i class="ti ti-language" aria-hidden="true"></i>
+          <span id="langBtn">हिंदी</span>
+        </button>
+        <a href="admin.html" class="pill">
+          <i class="ti ti-settings" aria-hidden="true"></i>
+          <span>Admin</span>
+        </a>
+      </div>
     </div>
-    <div class="topbar-right">
-      <button class="lang-pill" onclick="toggleLang()">
-        <i class="ti ti-language" aria-hidden="true"></i>
-        <span id="langBtnText">हिंदी</span>
-      </button>
-      <a href="admin.html" class="admin-btn">
-        <i class="ti ti-settings" aria-hidden="true"></i>
-        <span>Admin</span>
-      </a>
-    </div>
-  </div>
 
-  <!-- NOTICE BOARD -->
-  <div class="notice-board" id="noticeBanner">
-    <div class="notice-inner">
-      <div class="notice-left">
-        <div class="notice-icon-wrap">
-          <i class="ti ti-speakerphone" aria-hidden="true"></i>
+    <div class="layout">
+      <!-- LEFT: DEPARTMENTS -->
+      <div class="dept-col">
+        <div class="page-eyebrow" id="companyEyebrow">Litpax Technology</div>
+        <div class="page-title">Departments <span>—</span></div>
+        <div class="page-sub" id="pageSub">Select your department and fill the form</div>
+        <div class="dept-grid" id="deptGrid"></div>
+      </div>
+
+      <!-- RIGHT: NOTICE BOARD -->
+      <div class="notice-col">
+        <div class="nb-header">
+          <div class="nb-dot"></div>
+          <div class="nb-title">Notice Board</div>
         </div>
-        <div>
-          <div class="notice-label">Notice</div>
-          <div class="notice-text" id="noticeText"></div>
+        <div class="notice-papers" id="noticePapers">
+          <div class="no-notice">
+            <i class="ti ti-pin" aria-hidden="true"></i>
+            Koi notice nahi hai
+          </div>
         </div>
       </div>
-      <button class="notice-close" onclick="document.getElementById('noticeBanner').style.display='none'">
-        <i class="ti ti-x" aria-hidden="true"></i>
-      </button>
     </div>
   </div>
 
-  <!-- DEPT VIEW -->
-  <div id="deptView">
-    <div class="page">
-      <div class="page-eyebrow" id="companyEyebrow">Litpax Technology</div>
-      <div class="page-title">Departments <span>—</span></div>
-      <div class="page-sub" id="pageSub">Select your department and fill the form</div>
-      <div class="dept-grid" id="deptGrid"></div>
+  <!-- FORMS APP -->
+  <div id="formsApp" style="display:none;">
+    <div class="topbar">
+      <div class="topbar-left">
+        <div class="tl">LT</div>
+        <div class="tn">Litpax</div>
+        <div class="td"></div>
+        <div class="tp">Departments Hub</div>
+      </div>
+      <div class="topbar-right">
+        <button class="pill" onclick="toggleLang()">
+          <i class="ti ti-language" aria-hidden="true"></i>
+          <span>हिंदी</span>
+        </button>
+        <a href="admin.html" class="pill">
+          <i class="ti ti-settings" aria-hidden="true"></i>
+          <span>Admin</span>
+        </a>
+      </div>
     </div>
-  </div>
 
-  <!-- FORMS VIEW -->
-  <div class="forms-view" id="formsView">
     <div class="forms-nav">
       <span onclick="goBack()">Home</span>
       <i class="ti ti-chevron-right" aria-hidden="true"></i>
