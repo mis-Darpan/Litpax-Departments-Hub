@@ -22,34 +22,21 @@ document.addEventListener('DOMContentLoaded', async () => {
   finally { showLoading(false); }
 });
 
+// Sab kuch fresh — koi cache nahi
 async function loadData() {
-  const cached = sessionStorage.getItem('hub_depts');
-  const cachedAt = sessionStorage.getItem('hub_depts_at');
-  let base = null;
-  if (cached && cachedAt && (Date.now() - cachedAt < CONFIG.CACHE_TTL)) {
-    base = JSON.parse(cached);
-  } else {
-    const res = await fetch(`${CONFIG.GAS_URL}?action=getData`);
-    base = await res.json();
-    if (base.error) throw new Error(base.error);
-    sessionStorage.setItem('hub_depts', JSON.stringify(base));
-    sessionStorage.setItem('hub_depts_at', Date.now());
-  }
-  // Notices always fresh
-  const nRes = await fetch(`${CONFIG.GAS_URL}?action=getData&t=${Date.now()}`);
-  const nJson = await nRes.json();
-  appData = { ...base, notices: nJson.notices || [] };
+  const res = await fetch(`${CONFIG.GAS_URL}?action=getData&t=${Date.now()}`);
+  const json = await res.json();
+  if (json.error) throw new Error(json.error);
+  appData = json;
 }
 
-// Sirf notices refresh karta hai — page flicker nahi hoga
+// Sirf notices refresh — page flicker nahi hoga
 async function refreshNotices() {
   try {
     const res = await fetch(`${CONFIG.GAS_URL}?action=getData&t=${Date.now()}`);
     const json = await res.json();
     if (json.error) return;
     const newNotices = json.notices || [];
-
-    // Sirf tab update karo jab change ho
     const oldIds = (appData.notices || []).map(n => n.id).join(',');
     const newIds = newNotices.map(n => n.id).join(',');
     if (oldIds !== newIds) {
@@ -102,7 +89,6 @@ function renderNotices() {
   });
 }
 
-// Notice board pe subtle pulse — sirf jab update ho
 function showRefreshPulse() {
   const el = document.getElementById('noticeCount');
   if (!el) return;
