@@ -24,18 +24,30 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 async function loadData() {
-  const cached = sessionStorage.getItem('hub_data');
-  const cachedAt = sessionStorage.getItem('hub_data_at');
+  // Departments & Forms — cached (5 min)
+  const cached = sessionStorage.getItem('hub_depts');
+  const cachedAt = sessionStorage.getItem('hub_depts_at');
+  let deptsData = null;
+
   if (cached && cachedAt && (Date.now() - cachedAt < CONFIG.CACHE_TTL)) {
-    appData = JSON.parse(cached);
-    return;
+    deptsData = JSON.parse(cached);
+  } else {
+    const res = await fetch(`${CONFIG.GAS_URL}?action=getData`);
+    const json = await res.json();
+    if (json.error) throw new Error(json.error);
+    deptsData = json;
+    sessionStorage.setItem('hub_depts', JSON.stringify(json));
+    sessionStorage.setItem('hub_depts_at', Date.now());
   }
-  const res = await fetch(`${CONFIG.GAS_URL}?action=getData`);
-  const json = await res.json();
-  if (json.error) throw new Error(json.error);
-  appData = json;
-  sessionStorage.setItem('hub_data', JSON.stringify(json));
-  sessionStorage.setItem('hub_data_at', Date.now());
+
+  // Notices — ALWAYS fresh (no cache)
+  const nRes = await fetch(`${CONFIG.GAS_URL}?action=getData&t=${Date.now()}`);
+  const nJson = await nRes.json();
+
+  appData = {
+    ...deptsData,
+    notices: nJson.notices || []
+  };
 }
 
 function renderGrid() {
@@ -68,7 +80,9 @@ function renderNotices() {
   }
   el.innerHTML = '';
   notices.forEach(n => {
-    const date = n.created_at ? new Date(n.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
+    const date = n.created_at
+      ? new Date(n.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
+      : '';
     const div = document.createElement('div');
     div.className = 'paper';
     div.innerHTML = `
