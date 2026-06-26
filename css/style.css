@@ -215,3 +215,36 @@ body { font-family: 'Inter', sans-serif; background: #fafafa; min-height: 100vh;
   transform: translateY(-50%);
   z-index: 5;
 }
+
+/* ── TICKER FIX — SEAMLESS LOOP ── */
+.ann-inner { padding: 0 !important; overflow: hidden !important; position: relative !important; }
+.ann-track {
+  display: flex !important;
+  align-items: center !important;
+  white-space: nowrap !important;
+  width: max-content !important;
+  animation: ticker 18s linear infinite !important;
+  padding: 10px 0 !important;
+}
+.ann-track:hover { animation-play-state: paused !important; }
+@keyframes ticker {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.ann-msg {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  color: #fff !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  padding-right: 100px !important;
+}
+.ann-msg i { font-size: 15px !important; flex-shrink: 0 !important; }
+.ann-close-wrap {
+  position: absolute !important;
+  right: 12px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  z-index: 5 !important;
+}
