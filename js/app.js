@@ -7,14 +7,10 @@ const LABELS = {
   hi: { sub: 'Apna department chunein aur form bharein', forms: 'फॉर्म', no_forms: 'Koi form nahi mila' }
 };
 
-// ── PWA SERVICE WORKER ──
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js').catch(() => {});
-  });
+  window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => {}); });
 }
 
-// ── PWA INSTALL PROMPT ──
 window.addEventListener('beforeinstallprompt', e => {
   e.preventDefault();
   deferredPrompt = e;
@@ -23,27 +19,23 @@ window.addEventListener('beforeinstallprompt', e => {
 });
 
 document.addEventListener('DOMContentLoaded', async () => {
-  // Install button
   const installBtn = document.getElementById('installBtn');
   if (installBtn) {
     installBtn.addEventListener('click', async () => {
       if (!deferredPrompt) return;
       deferredPrompt.prompt();
       const { outcome } = await deferredPrompt.userChoice;
-      if (outcome === 'accepted') {
-        document.getElementById('installBanner').style.display = 'none';
-      }
+      if (outcome === 'accepted') document.getElementById('installBanner').style.display = 'none';
       deferredPrompt = null;
     });
   }
-
   showLoading(true);
   try {
     await loadData();
     renderGrid();
     renderNotices();
     renderBanner();
-    if (appData.settings && appData.settings.company_name) {
+    if (appData.settings?.company_name) {
       const el = document.getElementById('companyEyebrow');
       if (el) el.textContent = appData.settings.company_name;
     }
@@ -65,36 +57,17 @@ async function refreshNotices() {
     const json = await res.json();
     if (json.error) return;
 
-    // Notices refresh
     const newNotices = json.notices || [];
     const oldIds = (appData.notices || []).map(n => n.id).join(',');
     const newIds = newNotices.map(n => n.id).join(',');
-    if (oldIds !== newIds) {
-      appData.notices = newNotices;
-      renderNotices();
-      showRefreshPulse();
-    }
+    if (oldIds !== newIds) { appData.notices = newNotices; renderNotices(); showRefreshPulse(); }
 
-    // Banner auto refresh
-    const oldBanner = JSON.stringify({
-      active: appData.settings?.banner_active,
-      msg:    appData.settings?.banner_message,
-      color:  appData.settings?.banner_color,
-    });
-    const newBanner = JSON.stringify({
-      active: json.settings?.banner_active,
-      msg:    json.settings?.banner_message,
-      color:  json.settings?.banner_color,
-    });
-    if (oldBanner !== newBanner) {
-      appData.settings = json.settings;
-      renderBanner();
-    }
-
+    const oldBanner = JSON.stringify({ a: appData.settings?.banner_active, m: appData.settings?.banner_message, c: appData.settings?.banner_color });
+    const newBanner = JSON.stringify({ a: json.settings?.banner_active, m: json.settings?.banner_message, c: json.settings?.banner_color });
+    if (oldBanner !== newBanner) { appData.settings = json.settings; renderBanner(); }
   } catch (e) {}
 }
 
-// ── ANNOUNCEMENT BANNER TICKER ──
 function renderBanner() {
   const s = appData.settings || {};
   const banner = document.getElementById('announcementBanner');
@@ -102,9 +75,7 @@ function renderBanner() {
   if (s.banner_active === 'TRUE' || s.banner_active === true) {
     banner.style.display = 'block';
     banner.className = s.banner_color === 'yellow' ? 'yellow' : 'red';
-    const msg = s.banner_message || '';
-    // Sab spans mein message fill karo
-    document.querySelectorAll('.ann-txt').forEach(el => el.textContent = msg);
+    document.querySelectorAll('.ann-txt').forEach(el => el.textContent = s.banner_message || '');
   } else {
     banner.style.display = 'none';
   }
@@ -119,8 +90,10 @@ function renderGrid() {
     card.className = 'dept-card';
     card.onclick = () => openDept(dept.id);
     card.innerHTML = `
-      <i class="ti ti-arrow-right dc-arr" aria-hidden="true"></i>
-      <div class="dc-icon" style="background:${dept.color}22;color:${dept.color}"><i class="ti ${dept.icon}" aria-hidden="true"></i></div>
+      <div class="dc-top">
+        <div class="dc-icon" style="background:${dept.color}22;color:${dept.color}"><i class="ti ${dept.icon}" aria-hidden="true"></i></div>
+        <i class="ti ti-arrow-right dc-arr" aria-hidden="true"></i>
+      </div>
       <div class="dc-name">${dept.name}</div>
       <div class="dc-count">${count} ${LABELS[currentLang].forms}</div>
     `;
@@ -144,9 +117,7 @@ function renderNotices() {
     div.innerHTML = `
       ${n.created_at ? `<div class="paper-date">${n.created_at}</div>` : ''}
       <div class="paper-msg">${n.message}</div>
-      <div class="paper-footer">
-        <div class="paper-tag"><i class="ti ti-pin" style="font-size:10px" aria-hidden="true"></i> Notice</div>
-      </div>
+      <div class="paper-footer"><div class="paper-tag"><i class="ti ti-pin" style="font-size:10px" aria-hidden="true"></i> Notice</div></div>
     `;
     board.appendChild(div);
   });
@@ -155,28 +126,28 @@ function renderNotices() {
 function showRefreshPulse() {
   const el = document.getElementById('noticeCount');
   if (!el) return;
-  el.style.background = '#2F9E44';
-  el.style.color = '#fff';
-  el.textContent = '● Updated';
+  el.style.background = '#2F9E44'; el.style.color = '#fff'; el.textContent = '● Updated';
   setTimeout(() => {
-    const notices = appData.notices || [];
-    el.style.background = '';
-    el.style.color = '';
-    el.textContent = `${notices.length} notice${notices.length !== 1 ? 's' : ''}`;
+    el.style.background = ''; el.style.color = '';
+    el.textContent = `${(appData.notices||[]).length} notices`;
   }, 2000);
 }
 
 function openDept(deptId) {
   const dept = appData.departments.find(d => d.id === deptId);
   const forms = appData.forms.filter(f => f.dept_id === deptId).sort((a, b) => a.order - b.order);
+
+  // Hide main, show forms — full width
   document.getElementById('mainApp').style.display = 'none';
-  const fa = document.getElementById('formsApp'); fa.style.display = 'block'; fa.style.width = '100%'; fa.style.position = 'relative';
+  document.getElementById('formsApp').style.cssText = 'display:block;width:100%;min-height:100vh;';
+
   document.getElementById('breadcrumb').textContent = dept.name;
   const fi = document.getElementById('fpIcon');
   fi.innerHTML = `<i class="ti ${dept.icon}" style="font-size:20px;color:${dept.color}" aria-hidden="true"></i>`;
   fi.style.background = dept.color + '22';
   document.getElementById('fpTitle').textContent = dept.name;
   document.getElementById('fpSub').textContent = `${forms.length} ${LABELS[currentLang].forms} available`;
+
   const tbl = document.getElementById('formTable');
   tbl.innerHTML = '';
   if (!forms.length) { tbl.innerHTML = `<tr><td class="empty-state">${LABELS[currentLang].no_forms}</td></tr>`; return; }
@@ -184,17 +155,21 @@ function openDept(deptId) {
     const tr = document.createElement('tr');
     tr.onclick = () => window.open(f.url, '_blank');
     tr.innerHTML = `
-      <td style="width:38px;padding:11px 6px 11px 0;"><div class="ft-icon" style="background:${dept.color}22;color:${dept.color}"><i class="ti ti-forms" aria-hidden="true"></i></div></td>
+      <td style="width:38px;padding:11px 6px 11px 0;">
+        <div class="ft-icon" style="background:${dept.color}22;color:${dept.color}"><i class="ti ti-forms" aria-hidden="true"></i></div>
+      </td>
       <td><div class="ft-name">${f.name}</div><div class="ft-type">${f.type}</div></td>
       <td style="width:28px;"><div class="ft-ext"><i class="ti ti-external-link" aria-hidden="true"></i></div></td>
     `;
     tbl.appendChild(tr);
   });
+  window.scrollTo(0, 0);
 }
 
 function goBack() {
-  document.getElementById('formsApp').style.display = 'none';
+  document.getElementById('formsApp').style.cssText = 'display:none;';
   document.getElementById('mainApp').style.display = 'block';
+  window.scrollTo(0, 0);
 }
 
 function toggleLang() {
