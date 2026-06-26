@@ -182,3 +182,36 @@ body { font-family: 'Inter', sans-serif; background: #fafafa; min-height: 100vh;
   .topbar { padding: 0 16px; }
   .page-title { font-size: 24px; }
 }
+
+/* ── TICKER ANIMATION ── */
+.ann-inner { padding: 0; overflow: hidden; }
+.ann-track {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  white-space: nowrap;
+  animation: ticker 20s linear infinite;
+  padding: 10px 0;
+}
+.ann-track:hover { animation-play-state: paused; }
+@keyframes ticker {
+  0%   { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+.ann-msg {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 500;
+  padding-right: 80px;
+}
+.ann-msg i { font-size: 15px; flex-shrink: 0; }
+.ann-close-wrap {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 5;
+}
