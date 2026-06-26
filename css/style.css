@@ -260,3 +260,37 @@ body { font-family: 'Inter', sans-serif; background: #fafafa; min-height: 100vh;
   .form-table td { padding: 10px 6px; }
   .ft-name { font-size: 12px; }
 }
+
+/* ── TABLET FORMS FIX ── */
+@media (max-width: 1024px) and (min-width: 769px) {
+  #formsApp { width: 100%; }
+  #formsApp .topbar { width: 100%; }
+  .forms-nav { padding: 12px 24px; width: 100%; }
+  .forms-page { 
+    padding: 28px 24px 24px; 
+    max-width: 100%; 
+    width: 100%;
+  }
+  .form-table { width: 100%; }
+  .fp-title { font-size: 20px; }
+  .fp-header { gap: 12px; margin-bottom: 20px; }
+}
+
+/* ── FORMS APP FULL WIDTH FIX ── */
+#formsApp {
+  width: 100% !important;
+  min-height: 100vh;
+  background: #fafafa;
+}
+#formsApp .topbar { width: 100%; }
+.forms-nav { width: 100%; max-width: 100%; }
+.forms-page { width: 100%; max-width: 860px; margin: 0 auto; padding: 36px 52px 32px; }
+
+@media (max-width: 1024px) {
+  .forms-page { padding: 28px 24px 24px; }
+  .forms-nav { padding: 12px 24px; }
+}
+@media (max-width: 768px) {
+  .forms-page { padding: 24px 16px; }
+  .forms-nav { padding: 12px 16px; }
+}
