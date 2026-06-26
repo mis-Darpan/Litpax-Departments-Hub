@@ -1,28 +1,57 @@
 let appData = null;
 let currentLang = 'en';
+let deferredPrompt = null;
 
 const LABELS = {
   en: { sub: 'Select your department and fill the form', forms: 'forms', no_forms: 'No forms available' },
   hi: { sub: 'Apna department chunein aur form bharein', forms: 'फॉर्म', no_forms: 'Koi form nahi mila' }
 };
 
+// ── PWA SERVICE WORKER ──
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  });
+}
+
+// ── PWA INSTALL PROMPT ──
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  const banner = document.getElementById('installBanner');
+  if (banner) banner.style.display = 'block';
+});
+
 document.addEventListener('DOMContentLoaded', async () => {
+  // Install button
+  const installBtn = document.getElementById('installBtn');
+  if (installBtn) {
+    installBtn.addEventListener('click', async () => {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        document.getElementById('installBanner').style.display = 'none';
+      }
+      deferredPrompt = null;
+    });
+  }
+
   showLoading(true);
   try {
     await loadData();
     renderGrid();
     renderNotices();
+    renderBanner();
     if (appData.settings && appData.settings.company_name) {
       const el = document.getElementById('companyEyebrow');
       if (el) el.textContent = appData.settings.company_name;
     }
-    // Auto refresh notices har 30 second
     setInterval(refreshNotices, 30000);
   } catch (err) { showError(); }
   finally { showLoading(false); }
 });
 
-// Sab kuch fresh — koi cache nahi
 async function loadData() {
   const res = await fetch(`${CONFIG.GAS_URL}?action=getData&t=${Date.now()}`);
   const json = await res.json();
@@ -30,7 +59,6 @@ async function loadData() {
   appData = json;
 }
 
-// Sirf notices refresh — page flicker nahi hoga
 async function refreshNotices() {
   try {
     const res = await fetch(`${CONFIG.GAS_URL}?action=getData&t=${Date.now()}`);
@@ -44,7 +72,21 @@ async function refreshNotices() {
       renderNotices();
       showRefreshPulse();
     }
-  } catch (e) { /* silently fail */ }
+  } catch (e) {}
+}
+
+// ── ANNOUNCEMENT BANNER ──
+function renderBanner() {
+  const s = appData.settings || {};
+  const banner = document.getElementById('announcementBanner');
+  if (!banner) return;
+  if (s.banner_active === 'TRUE' || s.banner_active === true) {
+    banner.style.display = 'block';
+    banner.className = s.banner_color === 'yellow' ? 'yellow' : 'red';
+    document.getElementById('annText').textContent = s.banner_message || '';
+  } else {
+    banner.style.display = 'none';
+  }
 }
 
 function renderGrid() {
