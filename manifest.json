@@ -1,0 +1,22 @@
+{
+  "name": "Litpax Hub",
+  "short_name": "Litpax Hub",
+  "description": "Litpax Technology Departments Hub",
+  "start_url": "/Litpax-Departments-Hub/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1a1a1a",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
