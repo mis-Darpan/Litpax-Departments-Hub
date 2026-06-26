@@ -4,15 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Litpax Hub</title>
-
-  <!-- PWA -->
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#1a1a1a" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   <meta name="apple-mobile-web-app-title" content="Litpax Hub" />
-  <link rel="apple-touch-icon" href="icons/icon-192.png" />
-
+  <link rel="apple-touch-icon" href="icon-192.png" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
   <link rel="stylesheet" href="css/style.css" />
 </head>
@@ -31,12 +27,10 @@
   <!-- ANNOUNCEMENT BANNER -->
   <div id="announcementBanner" style="display:none;position:relative;">
     <div class="ann-inner">
-      <div class="ann-track" id="annTrack">
-        <!-- First set -->
+      <div class="ann-track">
         <div class="ann-msg"><i class="ti ti-speakerphone" aria-hidden="true"></i><span class="ann-txt"></span></div>
         <div class="ann-msg"><i class="ti ti-speakerphone" aria-hidden="true"></i><span class="ann-txt"></span></div>
         <div class="ann-msg"><i class="ti ti-speakerphone" aria-hidden="true"></i><span class="ann-txt"></span></div>
-        <!-- Duplicate set — seamless loop ke liye -->
         <div class="ann-msg"><i class="ti ti-speakerphone" aria-hidden="true"></i><span class="ann-txt"></span></div>
         <div class="ann-msg"><i class="ti ti-speakerphone" aria-hidden="true"></i><span class="ann-txt"></span></div>
         <div class="ann-msg"><i class="ti ti-speakerphone" aria-hidden="true"></i><span class="ann-txt"></span></div>
@@ -49,24 +43,24 @@
     </div>
   </div>
 
-  <!-- INSTALL PWA BANNER -->
-  <div id="installBanner" style="display:none;">
-    <div class="ann-inner">
-      <div class="ann-left">
-        <i class="ti ti-device-mobile ann-icon" aria-hidden="true"></i>
-        <span>Install Litpax Hub as an app on your phone!</span>
-      </div>
-      <div style="display:flex;gap:8px;align-items:center;">
-        <button class="install-btn" id="installBtn">Install</button>
-        <button class="ann-close" onclick="document.getElementById('installBanner').style.display='none'">
-          <i class="ti ti-x" aria-hidden="true"></i>
-        </button>
-      </div>
+  <!-- INSTALL BANNER -->
+  <div id="installBanner" style="display:none;background:#1a1a1a;padding:10px 24px;display:none;align-items:center;justify-content:space-between;">
+    <div style="display:flex;align-items:center;gap:8px;color:rgba(255,255,255,0.85);font-size:12px;">
+      <i class="ti ti-device-mobile" style="font-size:14px;"></i>
+      <span>Install Litpax Hub as an app!</span>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <button class="install-btn" id="installBtn">Install</button>
+      <button class="ann-close" onclick="document.getElementById('installBanner').style.display='none'">
+        <i class="ti ti-x" aria-hidden="true"></i>
+      </button>
     </div>
   </div>
 
-  <!-- MAIN APP -->
-  <div id="mainApp">
+  <!-- WRAPPER — sab kuch yahan -->
+  <div id="wrapper">
+
+    <!-- TOPBAR — hamesha dikhega -->
     <div class="topbar">
       <div class="topbar-left">
         <div class="tl">LT</div>
@@ -82,62 +76,53 @@
       </div>
     </div>
 
-    <div class="layout">
-      <div class="dept-col">
-        <div class="page-eyebrow" id="companyEyebrow">Litpax Technology</div>
-        <div class="page-title">Departments <span>—</span></div>
-        <div class="page-sub" id="pageSub">Select your department and fill the form</div>
-        <div class="dept-grid" id="deptGrid"></div>
-      </div>
-
-      <div class="notice-col">
-        <div class="nb-topbar">
-          <div class="nb-title-wrap">
-            <div class="nb-dot"></div>
-            <div class="nb-title">Notice Board</div>
+    <!-- MAIN VIEW — departments + notice -->
+    <div id="mainView">
+      <div class="layout">
+        <div class="dept-col">
+          <div class="page-eyebrow" id="companyEyebrow">Litpax Technology</div>
+          <div class="page-title">Departments <span>—</span></div>
+          <div class="page-sub" id="pageSub">Select your department and fill the form</div>
+          <div class="dept-grid" id="deptGrid"></div>
+        </div>
+        <div class="notice-col">
+          <div class="nb-topbar">
+            <div class="nb-title-wrap">
+              <div class="nb-dot"></div>
+              <div class="nb-title">Notice Board</div>
+            </div>
+            <div class="nb-count" id="noticeCount">0 notices</div>
           </div>
-          <div class="nb-count" id="noticeCount">0 notices</div>
-        </div>
-        <div class="cork-board" id="corkBoard">
-          <div class="no-notice">
-            <i class="ti ti-pin" aria-hidden="true"></i>
-            Koi notice nahi hai
+          <div class="cork-board" id="corkBoard">
+            <div class="no-notice">
+              <i class="ti ti-pin" aria-hidden="true"></i>
+              Koi notice nahi hai
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- FORMS APP -->
-  <div id="formsApp" style="display:none;">
-    <div class="topbar">
-      <div class="topbar-left">
-        <div class="tl">LT</div>
-        <div class="tn">Litpax</div>
-        <div class="td"></div>
-        <div class="tp">Departments Hub</div>
+    <!-- FORMS VIEW — department click pe dikhega -->
+    <div id="formsView" style="display:none;">
+      <div class="forms-nav">
+        <span onclick="goBack()">Home</span>
+        <i class="ti ti-chevron-right" aria-hidden="true"></i>
+        <span id="breadcrumb" style="color:#37352f;font-weight:500;"></span>
       </div>
-      <div class="topbar-right">
-        <button class="pill" onclick="toggleLang()">
-          <i class="ti ti-language" aria-hidden="true"></i>
-          <span>हिंदी</span>
-        </button>
-        <a href="admin.html" class="pill">
-      <span onclick="goBack()">Home</span>
-      <i class="ti ti-chevron-right" aria-hidden="true"></i>
-      <span id="breadcrumb" style="color:#37352f;font-weight:500;"></span>
-    </div>
-    <div class="forms-page">
-      <div class="fp-header">
-        <div class="fp-icon" id="fpIcon"></div>
-        <div>
-          <div class="fp-title" id="fpTitle"></div>
-          <div class="fp-sub" id="fpSub"></div>
+      <div class="forms-page">
+        <div class="fp-header">
+          <div class="fp-icon" id="fpIcon"></div>
+          <div>
+            <div class="fp-title" id="fpTitle"></div>
+            <div class="fp-sub" id="fpSub"></div>
+          </div>
         </div>
+        <table class="form-table" id="formTable"></table>
       </div>
-      <table class="form-table" id="formTable"></table>
     </div>
-  </div>
+
+  </div><!-- /wrapper -->
 
   <script src="js/config.js"></script>
   <script src="js/app.js"></script>
