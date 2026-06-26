@@ -170,7 +170,7 @@ function openDept(deptId) {
   const dept = appData.departments.find(d => d.id === deptId);
   const forms = appData.forms.filter(f => f.dept_id === deptId).sort((a, b) => a.order - b.order);
   document.getElementById('mainApp').style.display = 'none';
-  document.getElementById('formsApp').style.display = 'block';
+  const fa = document.getElementById('formsApp'); fa.style.display = 'block'; fa.style.width = '100%'; fa.style.position = 'relative';
   document.getElementById('breadcrumb').textContent = dept.name;
   const fi = document.getElementById('fpIcon');
   fi.innerHTML = `<i class="ti ${dept.icon}" style="font-size:20px;color:${dept.color}" aria-hidden="true"></i>`;
