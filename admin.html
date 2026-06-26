@@ -38,48 +38,74 @@
       <button class="tab-btn active" onclick="switchTab('depts')"><i class="ti ti-building"></i> Departments</button>
       <button class="tab-btn" onclick="switchTab('forms')"><i class="ti ti-forms"></i> Forms</button>
       <button class="tab-btn" onclick="switchTab('notice')"><i class="ti ti-speakerphone"></i> Notice Board</button>
+      <button class="tab-btn" onclick="switchTab('banner')"><i class="ti ti-bell-ringing"></i> Banner</button>
     </div>
 
-    <!-- Departments Tab -->
+    <!-- Departments -->
     <div class="tab-content" id="tab-depts" style="display:block">
-      <div class="section-header">
-        <h3>All Departments</h3>
-        <button class="btn-add" onclick="newDept()"><i class="ti ti-plus"></i> Add</button>
-      </div>
+      <div class="section-header"><h3>All Departments</h3><button class="btn-add" onclick="newDept()"><i class="ti ti-plus"></i> Add</button></div>
       <div id="adminDeptList"></div>
     </div>
 
-    <!-- Forms Tab -->
+    <!-- Forms -->
     <div class="tab-content" id="tab-forms">
-      <div class="section-header">
-        <h3>All Forms</h3>
-        <button class="btn-add" onclick="newForm()"><i class="ti ti-plus"></i> Add</button>
-      </div>
-      <div class="filter-row">
-        <select id="formDeptFilter" onchange="renderAdminForms()">
-          <option value="">All Departments</option>
-        </select>
-      </div>
+      <div class="section-header"><h3>All Forms</h3><button class="btn-add" onclick="newForm()"><i class="ti ti-plus"></i> Add</button></div>
+      <div class="filter-row"><select id="formDeptFilter" onchange="renderAdminForms()"><option value="">All Departments</option></select></div>
       <div id="adminFormList"></div>
     </div>
 
-    <!-- Notice Board Tab -->
+    <!-- Notice Board -->
     <div class="tab-content" id="tab-notice">
-      <div class="section-header">
-        <h3>Notice Board</h3>
-        <button class="btn-add" onclick="showModal('noticeModal')"><i class="ti ti-plus"></i> Add Notice</button>
-      </div>
+      <div class="section-header"><h3>Notice Board</h3><button class="btn-add" onclick="showModal('noticeModal')"><i class="ti ti-plus"></i> Add Notice</button></div>
       <div id="adminNoticeList"></div>
+    </div>
+
+    <!-- Announcement Banner -->
+    <div class="tab-content" id="tab-banner">
+      <div class="section-header"><h3>Announcement Banner</h3></div>
+      <div class="banner-form">
+        <div class="banner-preview" id="bannerPreview">
+          <i class="ti ti-speakerphone"></i>
+          <span id="bannerPreviewText">Banner preview here...</span>
+        </div>
+        <div class="form-group">
+          <label>Banner Message</label>
+          <input type="text" id="bannerMessage" placeholder="Important announcement..." />
+        </div>
+        <div class="form-group">
+          <label>Color</label>
+          <div class="color-options">
+            <label class="color-opt red">
+              <input type="radio" name="bannerColor" value="red" checked />
+              <span>🔴 Red (Urgent)</span>
+            </label>
+            <label class="color-opt yellow">
+              <input type="radio" name="bannerColor" value="yellow" />
+              <span>🟠 Orange (General)</span>
+            </label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Status</label>
+          <div class="toggle-wrap">
+            <label class="toggle">
+              <input type="checkbox" id="bannerActive" onchange="updateBannerPreview()" />
+              <span class="toggle-slider"></span>
+            </label>
+            <span class="toggle-label" id="toggleLabel">Banner OFF</span>
+          </div>
+        </div>
+        <button class="btn-save" id="saveBannerBtn" onclick="saveBanner()">
+          <i class="ti ti-check"></i> Save Banner
+        </button>
+      </div>
     </div>
   </div>
 
   <!-- DEPT MODAL -->
   <div class="modal-overlay" id="deptModal">
     <div class="modal-box">
-      <div class="modal-header">
-        <div class="modal-title" id="deptModalTitle">Add Department</div>
-        <button class="modal-close" onclick="closeModal('deptModal')"><i class="ti ti-x"></i></button>
-      </div>
+      <div class="modal-header"><div class="modal-title" id="deptModalTitle">Add Department</div><button class="modal-close" onclick="closeModal('deptModal')"><i class="ti ti-x"></i></button></div>
       <div class="form-group"><label>ID (lowercase, no spaces)</label><input type="text" id="deptId" placeholder="e.g. store" /></div>
       <div class="form-group"><label>Name</label><input type="text" id="deptName" placeholder="e.g. Store" /></div>
       <div class="form-group"><label>Icon (Tabler icon)</label><input type="text" id="deptIcon" placeholder="e.g. ti-package" /></div>
@@ -95,10 +121,7 @@
   <!-- FORM MODAL -->
   <div class="modal-overlay" id="formModal">
     <div class="modal-box">
-      <div class="modal-header">
-        <div class="modal-title" id="formModalTitle">Add Form</div>
-        <button class="modal-close" onclick="closeModal('formModal')"><i class="ti ti-x"></i></button>
-      </div>
+      <div class="modal-header"><div class="modal-title" id="formModalTitle">Add Form</div><button class="modal-close" onclick="closeModal('formModal')"><i class="ti ti-x"></i></button></div>
       <input type="hidden" id="formId" />
       <div class="form-group"><label>Department</label><select id="formDeptId"></select></div>
       <div class="form-group"><label>Form Name</label><input type="text" id="formName" placeholder="e.g. Raw Material Inward Form" /></div>
@@ -115,14 +138,8 @@
   <!-- NOTICE MODAL -->
   <div class="modal-overlay" id="noticeModal">
     <div class="modal-box">
-      <div class="modal-header">
-        <div class="modal-title">New Notice</div>
-        <button class="modal-close" onclick="closeModal('noticeModal')"><i class="ti ti-x"></i></button>
-      </div>
-      <div class="form-group">
-        <label>Notice Message</label>
-        <textarea id="noticeInput" rows="4" placeholder="Notice likhein..."></textarea>
-      </div>
+      <div class="modal-header"><div class="modal-title">New Notice</div><button class="modal-close" onclick="closeModal('noticeModal')"><i class="ti ti-x"></i></button></div>
+      <div class="form-group"><label>Notice Message</label><textarea id="noticeInput" rows="4" placeholder="Notice likhein..."></textarea></div>
       <div class="modal-footer">
         <button class="btn-cancel" onclick="closeModal('noticeModal')">Cancel</button>
         <button class="btn-save" id="saveNoticeBtn" onclick="saveNotice()">Post Notice</button>
