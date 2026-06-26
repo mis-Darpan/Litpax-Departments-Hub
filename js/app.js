@@ -64,6 +64,8 @@ async function refreshNotices() {
     const res = await fetch(`${CONFIG.GAS_URL}?action=getData&t=${Date.now()}`);
     const json = await res.json();
     if (json.error) return;
+
+    // Notices refresh
     const newNotices = json.notices || [];
     const oldIds = (appData.notices || []).map(n => n.id).join(',');
     const newIds = newNotices.map(n => n.id).join(',');
@@ -72,6 +74,23 @@ async function refreshNotices() {
       renderNotices();
       showRefreshPulse();
     }
+
+    // Banner auto refresh
+    const oldBanner = JSON.stringify({
+      active: appData.settings?.banner_active,
+      msg:    appData.settings?.banner_message,
+      color:  appData.settings?.banner_color,
+    });
+    const newBanner = JSON.stringify({
+      active: json.settings?.banner_active,
+      msg:    json.settings?.banner_message,
+      color:  json.settings?.banner_color,
+    });
+    if (oldBanner !== newBanner) {
+      appData.settings = json.settings;
+      renderBanner();
+    }
+
   } catch (e) {}
 }
 
