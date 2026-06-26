@@ -84,11 +84,8 @@ function renderBanner() {
     banner.style.display = 'block';
     banner.className = s.banner_color === 'yellow' ? 'yellow' : 'red';
     const msg = s.banner_message || '';
-    // Teen copies — seamless loop ke liye
-    ['annText', 'annText2', 'annText3'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.textContent = msg;
-    });
+    // Sab spans mein message fill karo
+    document.querySelectorAll('.ann-txt').forEach(el => el.textContent = msg);
   } else {
     banner.style.display = 'none';
   }
