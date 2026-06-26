@@ -3,7 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Litpax Departments Hub</title>
+  <title>Litpax Hub</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#1a1a1a" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  <meta name="apple-mobile-web-app-title" content="Litpax Hub" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
   <link rel="stylesheet" href="css/style.css" />
 </head>
@@ -17,6 +26,35 @@
   <div id="errorMsg">
     <i class="ti ti-wifi-off" style="font-size:28px;display:block;margin-bottom:8px"></i>
     Data load nahi hua. Page refresh karein.
+  </div>
+
+  <!-- ANNOUNCEMENT BANNER -->
+  <div id="announcementBanner" style="display:none;">
+    <div class="ann-inner">
+      <div class="ann-left">
+        <i class="ti ti-speakerphone ann-icon" aria-hidden="true"></i>
+        <span id="annText"></span>
+      </div>
+      <button class="ann-close" onclick="document.getElementById('announcementBanner').style.display='none'">
+        <i class="ti ti-x" aria-hidden="true"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- INSTALL PWA BANNER -->
+  <div id="installBanner" style="display:none;">
+    <div class="ann-inner">
+      <div class="ann-left">
+        <i class="ti ti-device-mobile ann-icon" aria-hidden="true"></i>
+        <span>Install Litpax Hub as an app on your phone!</span>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button class="install-btn" id="installBtn">Install</button>
+        <button class="ann-close" onclick="document.getElementById('installBanner').style.display='none'">
+          <i class="ti ti-x" aria-hidden="true"></i>
+        </button>
+      </div>
+    </div>
   </div>
 
   <!-- MAIN APP -->
@@ -41,7 +79,6 @@
     </div>
 
     <div class="layout">
-      <!-- LEFT: DEPARTMENTS -->
       <div class="dept-col">
         <div class="page-eyebrow" id="companyEyebrow">Litpax Technology</div>
         <div class="page-title">Departments <span>—</span></div>
@@ -49,7 +86,6 @@
         <div class="dept-grid" id="deptGrid"></div>
       </div>
 
-      <!-- RIGHT: NOTICE BOARD -->
       <div class="notice-col">
         <div class="nb-topbar">
           <div class="nb-title-wrap">
