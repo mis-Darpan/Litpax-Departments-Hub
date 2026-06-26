@@ -75,7 +75,7 @@ async function refreshNotices() {
   } catch (e) {}
 }
 
-// ── ANNOUNCEMENT BANNER ──
+// ── ANNOUNCEMENT BANNER TICKER ──
 function renderBanner() {
   const s = appData.settings || {};
   const banner = document.getElementById('announcementBanner');
@@ -83,7 +83,12 @@ function renderBanner() {
   if (s.banner_active === 'TRUE' || s.banner_active === true) {
     banner.style.display = 'block';
     banner.className = s.banner_color === 'yellow' ? 'yellow' : 'red';
-    document.getElementById('annText').textContent = s.banner_message || '';
+    const msg = s.banner_message || '';
+    // Teen copies — seamless loop ke liye
+    ['annText', 'annText2', 'annText3'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = msg;
+    });
   } else {
     banner.style.display = 'none';
   }
