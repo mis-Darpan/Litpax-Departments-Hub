@@ -139,7 +139,7 @@ function openDept(deptId) {
 
   // Hide main, show forms — full width
   document.getElementById('mainApp').style.display = 'none';
-  document.getElementById('formsApp').style.cssText = 'display:block;width:100%;min-height:100vh;';
+  document.getElementById('formsApp').style.cssText = 'display:block;position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:100;overflow-y:auto;background:#fafafa;';
 
   document.getElementById('breadcrumb').textContent = dept.name;
   const fi = document.getElementById('fpIcon');
@@ -167,7 +167,7 @@ function openDept(deptId) {
 }
 
 function goBack() {
-  document.getElementById('formsApp').style.cssText = 'display:none;';
+  document.getElementById('formsApp').style.cssText = 'display:none;position:fixed;';
   document.getElementById('mainApp').style.display = 'block';
   window.scrollTo(0, 0);
 }
