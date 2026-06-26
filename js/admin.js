@@ -1,30 +1,14 @@
 let adminData = null;
-let adminPassword = '';
+let adminPassword = 'litpax@123'; // Fixed — no login needed
 
-document.addEventListener('DOMContentLoaded', () => {
-  showView('loginView');
-  document.getElementById('loginBtn').addEventListener('click', handleLogin);
-  document.getElementById('passwordInput').addEventListener('keypress', e => { if (e.key === 'Enter') handleLogin(); });
+document.addEventListener('DOMContentLoaded', async () => {
+  await loadAdminData();
+  showView('adminView');
+  renderAdminDepts();
+  renderAdminForms();
+  renderAdminNotices();
+  renderAdminBanner();
 });
-
-async function handleLogin() {
-  const pass = document.getElementById('passwordInput').value.trim();
-  if (!pass) return;
-  setBtnState('loginBtn', 'loading', 'Checking...');
-  try {
-    const res = await postGAS({ action: 'verifyPassword', password: pass });
-    if (res.success) {
-      adminPassword = pass;
-      await loadAdminData();
-      showView('adminView');
-      renderAdminDepts();
-      renderAdminForms();
-      renderAdminNotices();
-      renderAdminBanner();
-    } else { showLoginError('Galat password!'); }
-  } catch (e) { showLoginError('Connection error. Try again.'); }
-  setBtnState('loginBtn', 'default', 'Login');
-}
 
 async function loadAdminData() {
   const res = await fetch(`${CONFIG.GAS_URL}?action=getData&t=${Date.now()}`);
@@ -83,8 +67,11 @@ async function saveDept() {
   const isNew = !adminData.departments.find(d => d.id === id);
   const finalId = id || name.toLowerCase().replace(/\s+/g, '_');
   const res = await postGAS({ action: isNew ? 'addDepartment' : 'updateDepartment', password: adminPassword, data: { id: finalId, name, icon, color, order, active: true } });
-  if (res.success) { await loadAdminData(); renderAdminDepts(); renderAdminForms(); closeModal('deptModal'); setBtnState('saveDeptBtn', 'success', 'Saved!'); setTimeout(() => setBtnState('saveDeptBtn', 'default', 'Save'), 2000); }
-  else { alert('Error: ' + (res.error || 'Unknown')); setBtnState('saveDeptBtn', 'default', 'Save'); }
+  if (res.success) {
+    await loadAdminData(); renderAdminDepts(); renderAdminForms(); closeModal('deptModal');
+    setBtnState('saveDeptBtn', 'success', 'Saved!');
+    setTimeout(() => setBtnState('saveDeptBtn', 'default', 'Save'), 2000);
+  } else { alert('Error: ' + (res.error || 'Unknown')); setBtnState('saveDeptBtn', 'default', 'Save'); }
 }
 
 async function deleteDept(id) {
@@ -157,8 +144,11 @@ async function saveForm() {
   setBtnState('saveFormBtn', 'loading', 'Saving...');
   const isNew = !id || !adminData.forms.find(f => String(f.id) === String(id));
   const res = await postGAS({ action: isNew ? 'addForm' : 'updateForm', password: adminPassword, data: { id, dept_id, name, url, type, order, active: true } });
-  if (res.success) { await loadAdminData(); renderAdminForms(); closeModal('formModal'); setBtnState('saveFormBtn', 'success', 'Saved!'); setTimeout(() => setBtnState('saveFormBtn', 'default', 'Save'), 2000); }
-  else { alert('Error: ' + (res.error || 'Unknown')); setBtnState('saveFormBtn', 'default', 'Save'); }
+  if (res.success) {
+    await loadAdminData(); renderAdminForms(); closeModal('formModal');
+    setBtnState('saveFormBtn', 'success', 'Saved!');
+    setTimeout(() => setBtnState('saveFormBtn', 'default', 'Save'), 2000);
+  } else { alert('Error: ' + (res.error || 'Unknown')); setBtnState('saveFormBtn', 'default', 'Save'); }
 }
 
 async function deleteForm(id) {
@@ -200,10 +190,7 @@ async function saveNotice() {
   setBtnState('saveNoticeBtn', 'loading', 'Posting...');
   const res = await postGAS({ action: 'addNotice', password: adminPassword, data: { message: msg } });
   if (res.success) {
-    await loadAdminData();
-    renderAdminNotices();
-      renderAdminBanner();
-    closeModal('noticeModal');
+    await loadAdminData(); renderAdminNotices(); closeModal('noticeModal');
     document.getElementById('noticeInput').value = '';
     setBtnState('saveNoticeBtn', 'success', 'Posted!');
     setTimeout(() => setBtnState('saveNoticeBtn', 'default', 'Post Notice'), 2000);
@@ -213,8 +200,49 @@ async function saveNotice() {
 async function deleteNotice(id) {
   if (!confirm('Ye notice hatana chahte ho?')) return;
   const res = await postGAS({ action: 'deleteNotice', password: adminPassword, data: { id } });
-  if (res.success) { await loadAdminData(); renderAdminNotices();
-      renderAdminBanner(); }
+  if (res.success) { await loadAdminData(); renderAdminNotices(); }
+}
+
+// ── BANNER ──
+function renderAdminBanner() {
+  const s = adminData.settings || {};
+  document.getElementById('bannerMessage').value = s.banner_message || '';
+  document.getElementById('bannerActive').checked = s.banner_active === 'TRUE' || s.banner_active === true;
+  document.getElementById('toggleLabel').textContent = document.getElementById('bannerActive').checked ? 'Banner ON' : 'Banner OFF';
+  const color = s.banner_color || 'red';
+  const radio = document.querySelector(`input[name="bannerColor"][value="${color}"]`);
+  if (radio) radio.checked = true;
+  updateBannerPreview();
+}
+
+function updateBannerPreview() {
+  const msg    = document.getElementById('bannerMessage').value || 'Banner preview...';
+  const color  = document.querySelector('input[name="bannerColor"]:checked')?.value || 'red';
+  const active = document.getElementById('bannerActive').checked;
+  document.getElementById('toggleLabel').textContent = active ? 'Banner ON' : 'Banner OFF';
+  document.getElementById('bannerPreviewText').textContent = msg;
+  document.getElementById('bannerPreview').className = 'banner-preview ' + (active ? color : 'off');
+}
+
+async function saveBanner() {
+  const msg    = document.getElementById('bannerMessage').value.trim();
+  const color  = document.querySelector('input[name="bannerColor"]:checked')?.value || 'red';
+  const active = document.getElementById('bannerActive').checked;
+  setBtnState('saveBannerBtn', 'loading', 'Saving...');
+  const updates = [
+    { key: 'banner_message', value: msg },
+    { key: 'banner_color',   value: color },
+    { key: 'banner_active',  value: active ? 'TRUE' : 'FALSE' },
+  ];
+  try {
+    for (const u of updates) await postGAS({ action: 'updateSettings', password: adminPassword, data: u });
+    await loadAdminData();
+    setBtnState('saveBannerBtn', 'success', 'Saved!');
+    setTimeout(() => setBtnState('saveBannerBtn', 'default', 'Save Banner'), 2000);
+  } catch (e) {
+    alert('Error saving banner');
+    setBtnState('saveBannerBtn', 'default', 'Save Banner');
+  }
 }
 
 // ── TABS ──
@@ -242,60 +270,4 @@ function setBtnState(id, state, text) {
   if (state === 'loading') { btn.innerHTML = `<span class="btn-spinner"></span> ${text}`; btn.style.opacity = '0.7'; btn.style.background = ''; }
   else if (state === 'success') { btn.innerHTML = `<i class="ti ti-check"></i> ${text}`; btn.style.opacity = '1'; btn.style.background = '#2F9E44'; }
   else { btn.innerHTML = text; btn.style.opacity = '1'; btn.style.background = ''; }
-}
-
-function showLoginError(msg) { const el = document.getElementById('loginError'); el.textContent = msg; el.style.display = 'block'; }
-function logout() { adminPassword = ''; adminData = null; showView('loginView'); document.getElementById('passwordInput').value = ''; }
-
-// ── BANNER ──
-function renderAdminBanner() {
-  const s = adminData.settings || {};
-  const msg    = s.banner_message || '';
-  const color  = s.banner_color  || 'red';
-  const active = s.banner_active === 'TRUE' || s.banner_active === true;
-
-  document.getElementById('bannerMessage').value = msg;
-  document.getElementById('bannerActive').checked = active;
-  document.getElementById('toggleLabel').textContent = active ? 'Banner ON' : 'Banner OFF';
-  document.querySelector(`input[name="bannerColor"][value="${color}"]`).checked = true;
-  updateBannerPreview();
-}
-
-function updateBannerPreview() {
-  const msg    = document.getElementById('bannerMessage').value || 'Banner preview...';
-  const color  = document.querySelector('input[name="bannerColor"]:checked')?.value || 'red';
-  const active = document.getElementById('bannerActive').checked;
-  const label  = document.getElementById('toggleLabel');
-  const prev   = document.getElementById('bannerPreview');
-  const prevText = document.getElementById('bannerPreviewText');
-
-  label.textContent = active ? 'Banner ON' : 'Banner OFF';
-  prevText.textContent = msg;
-  prev.className = 'banner-preview ' + (active ? color : 'off');
-}
-
-async function saveBanner() {
-  const msg    = document.getElementById('bannerMessage').value.trim();
-  const color  = document.querySelector('input[name="bannerColor"]:checked')?.value || 'red';
-  const active = document.getElementById('bannerActive').checked;
-
-  setBtnState('saveBannerBtn', 'loading', 'Saving...');
-
-  const updates = [
-    { key: 'banner_message', value: msg },
-    { key: 'banner_color',   value: color },
-    { key: 'banner_active',  value: active ? 'TRUE' : 'FALSE' },
-  ];
-
-  try {
-    for (const u of updates) {
-      await postGAS({ action: 'updateSettings', password: adminPassword, data: u });
-    }
-    await loadAdminData();
-    setBtnState('saveBannerBtn', 'success', 'Saved!');
-    setTimeout(() => setBtnState('saveBannerBtn', 'default', '<i class="ti ti-check"></i> Save Banner'), 2000);
-  } catch (e) {
-    alert('Error saving banner');
-    setBtnState('saveBannerBtn', 'default', '<i class="ti ti-check"></i> Save Banner');
-  }
 }
