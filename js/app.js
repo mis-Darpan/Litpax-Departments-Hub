@@ -14,8 +14,7 @@ if ('serviceWorker' in navigator) {
 window.addEventListener('beforeinstallprompt', e => {
   e.preventDefault();
   deferredPrompt = e;
-  const banner = document.getElementById('installBanner');
-  if (banner) banner.style.display = 'block';
+  document.getElementById('installBanner').style.display = 'flex';
 });
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -56,12 +55,10 @@ async function refreshNotices() {
     const res = await fetch(`${CONFIG.GAS_URL}?action=getData&t=${Date.now()}`);
     const json = await res.json();
     if (json.error) return;
-
     const newNotices = json.notices || [];
     const oldIds = (appData.notices || []).map(n => n.id).join(',');
     const newIds = newNotices.map(n => n.id).join(',');
     if (oldIds !== newIds) { appData.notices = newNotices; renderNotices(); showRefreshPulse(); }
-
     const oldBanner = JSON.stringify({ a: appData.settings?.banner_active, m: appData.settings?.banner_message, c: appData.settings?.banner_color });
     const newBanner = JSON.stringify({ a: json.settings?.banner_active, m: json.settings?.banner_message, c: json.settings?.banner_color });
     if (oldBanner !== newBanner) { appData.settings = json.settings; renderBanner(); }
@@ -127,19 +124,15 @@ function showRefreshPulse() {
   const el = document.getElementById('noticeCount');
   if (!el) return;
   el.style.background = '#2F9E44'; el.style.color = '#fff'; el.textContent = '● Updated';
-  setTimeout(() => {
-    el.style.background = ''; el.style.color = '';
-    el.textContent = `${(appData.notices||[]).length} notices`;
-  }, 2000);
+  setTimeout(() => { el.style.background = ''; el.style.color = ''; el.textContent = `${(appData.notices||[]).length} notices`; }, 2000);
 }
 
 function openDept(deptId) {
   const dept = appData.departments.find(d => d.id === deptId);
   const forms = appData.forms.filter(f => f.dept_id === deptId).sort((a, b) => a.order - b.order);
 
-  // Hide main, show forms — full width
-  document.getElementById('mainApp').style.display = 'none';
-  document.getElementById('formsApp').style.cssText = 'display:block;position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:100;overflow-y:auto;background:#fafafa;';
+  document.getElementById('mainView').style.display = 'none';
+  document.getElementById('formsView').style.display = 'block';
 
   document.getElementById('breadcrumb').textContent = dept.name;
   const fi = document.getElementById('fpIcon');
@@ -167,8 +160,8 @@ function openDept(deptId) {
 }
 
 function goBack() {
-  document.getElementById('formsApp').style.cssText = 'display:none;position:fixed;';
-  document.getElementById('mainApp').style.display = 'block';
+  document.getElementById('formsView').style.display = 'none';
+  document.getElementById('mainView').style.display = 'block';
   window.scrollTo(0, 0);
 }
 
