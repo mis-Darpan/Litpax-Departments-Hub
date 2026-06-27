@@ -132,7 +132,7 @@ function openDept(deptId) {
   const forms = appData.forms.filter(f => f.dept_id === deptId).sort((a, b) => a.order - b.order);
 
   document.getElementById('mainView').style.display = 'none';
-  document.getElementById('formsView').style.display = 'block';
+  const fv = document.getElementById('formsView'); fv.style.display = 'block'; fv.classList.remove('visible'); void fv.offsetWidth; fv.classList.add('visible');
 
   document.getElementById('breadcrumb').textContent = dept.name;
   const fi = document.getElementById('fpIcon');
