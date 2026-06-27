@@ -337,3 +337,99 @@ body { font-family: 'Inter', sans-serif; background: #fafafa; min-height: 100vh;
   #formsView .forms-page { padding: 24px 16px; }
   #formsView .forms-nav { padding: 12px 16px; }
 }
+
+/* ── ANIMATIONS ── */
+
+/* Page load — topbar */
+.topbar {
+  animation: slideDown 0.4s ease forwards;
+}
+@keyframes slideDown {
+  from { transform: translateY(-10px); opacity: 0; }
+  to   { transform: translateY(0);     opacity: 1; }
+}
+
+/* Page load — eyebrow + title + sub */
+.page-eyebrow {
+  animation: fadeUp 0.4s ease 0.1s both;
+}
+.page-title {
+  animation: fadeUp 0.4s ease 0.2s both;
+}
+.page-sub {
+  animation: fadeUp 0.4s ease 0.3s both;
+}
+
+/* Department cards — stagger */
+.dept-card:nth-child(1) { animation: fadeUp 0.35s ease 0.2s both; }
+.dept-card:nth-child(2) { animation: fadeUp 0.35s ease 0.25s both; }
+.dept-card:nth-child(3) { animation: fadeUp 0.35s ease 0.3s both; }
+.dept-card:nth-child(4) { animation: fadeUp 0.35s ease 0.35s both; }
+.dept-card:nth-child(5) { animation: fadeUp 0.35s ease 0.4s both; }
+.dept-card:nth-child(6) { animation: fadeUp 0.35s ease 0.45s both; }
+
+@keyframes fadeUp {
+  from { transform: translateY(16px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+/* Notice board */
+.notice-col {
+  animation: fadeIn 0.5s ease 0.3s both;
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Papers — stagger */
+.paper:nth-child(1) { animation: paperDrop 0.4s ease 0.3s both; }
+.paper:nth-child(2) { animation: paperDrop 0.4s ease 0.4s both; }
+.paper:nth-child(3) { animation: paperDrop 0.4s ease 0.5s both; }
+.paper:nth-child(4) { animation: paperDrop 0.4s ease 0.6s both; }
+.paper:nth-child(5) { animation: paperDrop 0.4s ease 0.7s both; }
+.paper:nth-child(6) { animation: paperDrop 0.4s ease 0.8s both; }
+
+@keyframes paperDrop {
+  from { transform: translateY(-20px) rotate(0deg); opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Forms view — slide in */
+#formsView {
+  animation: none;
+}
+#formsView.visible {
+  animation: slideInRight 0.3s ease forwards;
+}
+@keyframes slideInRight {
+  from { transform: translateX(20px); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+
+/* Forms list rows */
+.form-table tr {
+  animation: fadeUp 0.3s ease both;
+}
+.form-table tr:nth-child(1) { animation-delay: 0.05s; }
+.form-table tr:nth-child(2) { animation-delay: 0.1s; }
+.form-table tr:nth-child(3) { animation-delay: 0.15s; }
+.form-table tr:nth-child(4) { animation-delay: 0.2s; }
+.form-table tr:nth-child(5) { animation-delay: 0.25s; }
+.form-table tr:nth-child(6) { animation-delay: 0.3s; }
+.form-table tr:nth-child(7) { animation-delay: 0.35s; }
+.form-table tr:nth-child(8) { animation-delay: 0.4s; }
+
+/* fp-header */
+.fp-header {
+  animation: fadeUp 0.35s ease 0.1s both;
+}
+
+/* Banner slide down */
+#announcementBanner {
+  animation: bannerSlide 0.4s ease forwards;
+}
+@keyframes bannerSlide {
+  from { transform: translateY(-100%); opacity: 0; }
+  to   { transform: translateY(0);     opacity: 1; }
+}
